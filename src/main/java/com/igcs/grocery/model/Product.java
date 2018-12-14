@@ -1,14 +1,17 @@
 package com.igcs.grocery.model;
 
-import java.math.BigDecimal;
-
 public class Product {
+
     private String productName;
+
     private double price;
 
-    public Product( String productName, double price ) {
+    private Unit unit;
+
+    public Product( String productName, double price, Unit unit ) {
         this.productName = productName;
         this.price = price;
+        this.unit = unit;
     }
 
     public String getProductName() {
@@ -25,5 +28,13 @@ public class Product {
 
     public void setPrice( double price ) {
         this.price = price;
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit( Unit unit ) {
+        this.unit = unit;
     }
 }

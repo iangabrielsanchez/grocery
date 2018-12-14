@@ -1,4 +1,4 @@
-package com.igcs;
+package com.igcs.grocery;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
