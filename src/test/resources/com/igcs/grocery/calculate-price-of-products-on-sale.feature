@@ -11,3 +11,16 @@ Feature: Calculate price of products on sale
             | chips     | 35           | 30        | 30         |
             | juice     | 20           | 16        | 16         |
             | ice cream | 100          | 85        | 85         |
+
+
+    Scenario Outline:
+        Given I have started the checkout with product promos
+        When I scan "<product>" "<times>" times
+        Then the checkout items should be "<itemCount>"
+
+        Examples:
+            | product | itemCount | times |
+            | chips   | 3         | 2     |
+            | juice   | 2         | 1     |
+
+

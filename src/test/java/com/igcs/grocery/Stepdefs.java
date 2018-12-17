@@ -1,6 +1,9 @@
 package com.igcs.grocery;
 
+import com.igcs.grocery.exception.ItemNotFoundException;
 import com.igcs.grocery.model.Product;
+import com.igcs.grocery.model.ProductQuantityPair;
+import com.igcs.grocery.model.Promo;
 import com.igcs.grocery.model.Unit;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -49,7 +52,29 @@ public class Stepdefs {
     @When( "^I scan \"([^\"]*)\" with a regular price of (\\d+.*\\d+) and a sale price of (\\d+.*\\d+)$" )
     public void i_scan_with_a_regular_price_of_and_a_sale_price_of( String product, Double regularPrice,
             Double salePrice ) throws Exception {
-        store.scanProduct(product, 1);
+        store.scanProduct( product, 1 );
+    }
+
+    @Given( "^I have started the checkout with product promos$" )
+    public void i_have_started_the_checkout_with_product_promos() throws Exception {
+        // Write code here that turns the phrase above into concrete actions
+        store = new GroceryStore();
+        addItemsPerPiece( store, false );
+        addPromo( store );
+    }
+
+    @When( "^I scan \"([^\"]*)\" \"(\\d+)\" times$" )
+    public void i_scan_times( String arg1, int arg2 ) throws Exception {
+        for ( int i = 0; i < arg2; i++ ) {
+            store.scanProduct( arg1 );
+        }
+    }
+
+
+    @Then( "^the checkout items should be \"(\\d+)\"$" )
+    public void the_checkout_items_should_be( int arg1 ) throws Exception {
+        // Write code here that turns the phrase above into concrete actions
+        assertEquals( arg1, store.getCheckoutList().size() );
     }
 
 
@@ -70,6 +95,28 @@ public class Stepdefs {
         store.addItem( rice );
         store.addItem( sugar );
         store.addItem( meat );
+    }
+
+    private void addPromo( GroceryStore store ) throws ItemNotFoundException {
+        ProductQuantityPair oneJuice = new ProductQuantityPair(
+                store.getProduct( "juice" ), 1 );
+
+        Promo buy1Take1Juice = new Promo();
+        buy1Take1Juice.addRequirement( oneJuice );
+        buy1Take1Juice.addGettable( oneJuice );
+
+        ProductQuantityPair twoChips = new ProductQuantityPair(
+                store.getProduct( "chips" ), 2 );
+
+        ProductQuantityPair oneChips = new ProductQuantityPair(
+                store.getProduct( "chips" ), 1 );
+
+        Promo buy2Take1Chips = new Promo();
+        buy2Take1Chips.addRequirement( twoChips );
+        buy2Take1Chips.addGettable( oneChips );
+
+        store.addPromo( buy1Take1Juice );
+        store.addPromo( buy2Take1Chips );
     }
 
 

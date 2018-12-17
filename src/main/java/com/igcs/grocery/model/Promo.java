@@ -40,10 +40,10 @@ public class Promo {
     }
 
     public void addGettable( ProductQuantityPair gettable ) {
-        this.requirements.add( gettable );
+        this.gettables.add( gettable );
     }
 
     public void addGettables( ProductQuantityPair[] gettables ) {
-        this.requirements.addAll( Arrays.asList( gettables ) );
+        this.gettables.addAll( Arrays.asList( gettables ) );
     }
 }
