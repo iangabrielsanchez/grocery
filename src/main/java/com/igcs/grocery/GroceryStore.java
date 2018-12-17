@@ -2,10 +2,12 @@ package com.igcs.grocery;
 
 import com.igcs.grocery.exception.ItemNotFoundException;
 import com.igcs.grocery.model.Product;
-import com.igcs.grocery.model.Unit;
+import com.igcs.grocery.model.Promo;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class GroceryStore {
 
@@ -13,21 +15,27 @@ public class GroceryStore {
 
     private double totalPrice;
 
+    private Set<Promo> promos;
+
     public GroceryStore() {
         products = new HashMap<>();
-        addItem( "chips", 35, Unit.PIECE );
-        addItem( "juice", 20, Unit.PIECE );
-        addItem( "ice cream", 100, Unit.PIECE );
-        addItem( "rice", 40, Unit.KILOGRAM );
-        addItem( "sugar",17, Unit.KILOGRAM );
-        addItem( "meat", 405, Unit.KILOGRAM );
         totalPrice = 0d;
+        promos = new HashSet<>();
+    }
+
+    public Set<Promo> getPromos() {
+        return promos;
+    }
+
+    public void addPromos( Promo promo ) {
+        this.promos.add( promo );
     }
 
     public void scanProduct( String productName, double quantity ) throws ItemNotFoundException {
         if ( products.containsKey( productName ) ) {
             Product product = products.get( productName );
-            totalPrice += ( product.getPrice() * quantity );
+            double salePrice = product.isOnSale()? product.getSalePrice() : product.getPrice();
+            totalPrice += ( salePrice * quantity );
         } else {
             throw new ItemNotFoundException();
         }
@@ -41,8 +49,7 @@ public class GroceryStore {
         return totalPrice;
     }
 
-    public void addItem( String productName, double price, Unit unit ) {
-        Product product = new Product( productName, price, unit );
+    public void addItem( Product product ) {
         products.put( product.getProductName(), product );
     }
 }
