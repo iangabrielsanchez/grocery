@@ -17,11 +17,29 @@ public class GroceryStore {
 
     private List<Product> checkoutList;
 
+
+    private List<Double> checkoutListQuantity;
+
+    private List<Double> checkoutListPrice;
+
+
     public GroceryStore() {
         products = new HashMap<>();
         totalPrice = 0d;
         promos = new HashSet<>();
         checkoutList = new ArrayList<>();
+
+        checkoutListQuantity = new ArrayList<>();
+        checkoutListPrice = new ArrayList<>();
+    }
+
+    public List<Double> getCheckoutListQuantity() {
+        return checkoutListQuantity;
+    }
+
+    public List<Double> getCheckoutListPrice() {
+        return checkoutListPrice;
+
     }
 
     public List<Product> getCheckoutList() {
@@ -39,7 +57,9 @@ public class GroceryStore {
     public void scanProduct( String productName, double quantity ) throws ItemNotFoundException {
         Product product = getProduct( productName );
         double salePrice = product.isOnSale() ? product.getSalePrice() : product.getPrice();
-        checkoutList.add( product );
+
+        addToCheckout( product, quantity, salePrice );
+
         addGettablesToCartIfPromoExists( product );
 
         totalPrice += ( salePrice * quantity );
@@ -52,6 +72,7 @@ public class GroceryStore {
     public Product getProduct( String productName ) throws ItemNotFoundException {
         if ( products.containsKey( productName ) ) {
             return products.get( productName );
+
         } else {
             throw new ItemNotFoundException();
         }
@@ -65,9 +86,10 @@ public class GroceryStore {
             for ( ProductQuantityPair requirement : requirements ) {
                 if ( requirement.getProduct().equals( product ) ) {
                     if ( checkoutList.contains( product ) ) {
-                        long count = checkoutList.stream().filter( p -> {
-                            return p.getProductName().equals( product.getProductName() );
-                        } ).count();
+
+                        long count = checkoutList.stream().filter(
+                                p -> p.getProductName().equals( product.getProductName() ) ).count();
+
                         if ( count == requirement.getQuantity() ) {
                             requirementsToSatisfy--;
                         }
@@ -77,7 +99,9 @@ public class GroceryStore {
             if ( requirementsToSatisfy == 0 ) {
                 for ( ProductQuantityPair gettable : promo.getGettables() ) {
                     for ( int i = 0; i < gettable.getQuantity(); i++ ) {
-                        checkoutList.add( gettable.getProduct() );
+
+                        addToCheckout( gettable.getProduct(), 1, 0 );
+
                     }
                 }
             }
@@ -90,5 +114,11 @@ public class GroceryStore {
 
     public void addItem( Product product ) {
         products.put( product.getProductName(), product );
+    }
+
+    private void addToCheckout( Product product, double quantity, double price ) {
+        checkoutList.add( product );
+        checkoutListQuantity.add( quantity );
+        checkoutListPrice.add( price );
     }
 }
