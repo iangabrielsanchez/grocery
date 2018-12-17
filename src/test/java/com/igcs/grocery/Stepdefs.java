@@ -57,8 +57,16 @@ public class Stepdefs {
     public void i_scan_with_a_regular_price_of_and_a_sale_price_of( String product, Double regularPrice,
             Double salePrice ) throws Exception {
         store.scanProduct( product, 1 );
+
     }
 
+    @Given( "^I have started the checkout with product promos$" )
+    public void i_have_started_the_checkout_with_product_promos() throws Exception {
+        // Write code here that turns the phrase above into concrete actions
+        store = new GroceryStore();
+        addItemsPerPiece( store, false );
+        addPromo( store );
+    }
 
     @When( "^I scan \"([^\"]*)\" \"(\\d+)\" times$" )
     public void i_scan_times( String arg1, int arg2 ) throws Exception {
@@ -131,9 +139,10 @@ public class Stepdefs {
     }
 
     private void addPromo( GroceryStore store ) throws ItemNotFoundException {
+
         Promo buy1Take1Juice = new Promo();
         ProductQuantityPair oneJuice = new ProductQuantityPair(
-                store.getProduct( "chips" ), 2 );
+                store.getProduct( "juice" ), 1 );
 
         buy1Take1Juice.addRequirement( oneJuice );
         buy1Take1Juice.addGettable( oneJuice );
@@ -151,6 +160,7 @@ public class Stepdefs {
         store.addPromo( buy1Take1Juice );
         store.addPromo( buy2Take1Chips );
     }
+
 
     private void addItemsPerPiece( GroceryStore store, boolean onSale ) {
         Product chips = new Product( "chips", 35, Unit.PIECE, onSale, 30 );
